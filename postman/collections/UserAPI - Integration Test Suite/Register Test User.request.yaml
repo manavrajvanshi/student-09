@@ -1,0 +1,36 @@
+$kind: http-request
+name: 'Register Test User'
+method: GET
+order: 2000
+url: '{{baseUrl}}/v1/users/register-test-user?username=testuser_integration'
+queryParams:
+  - key: username
+    value: testuser_integration
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has id, username, and token", function () {
+          const json = pm.response.json();
+          pm.expect(json).to.have.property("id");
+          pm.expect(json).to.have.property("username");
+          pm.expect(json).to.have.property("token");
+      });
+
+      pm.test("Username matches requested username", function () {
+          const json = pm.response.json();
+          pm.expect(json.username).to.eql("testuser_integration");
+      });
+
+      // Save for downstream requests
+      if (pm.response.code === 201) {
+          const json = pm.response.json();
+          pm.collectionVariables.set("userId", json.id);
+          pm.collectionVariables.set("token", json.token);
+      }

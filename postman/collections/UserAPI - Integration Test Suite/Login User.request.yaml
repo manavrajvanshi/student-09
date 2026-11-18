@@ -1,0 +1,27 @@
+$kind: http-request
+method: POST
+order: 3000
+url: '{{baseUrl}}/v1/users/login'
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // Save token and userId for downstream requests
+      if (pm.response.code === 200) {
+          const json = pm.response.json();
+          pm.collectionVariables.set("token", json.token);
+          pm.collectionVariables.set("userId", json.id);
+      }

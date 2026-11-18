@@ -1,0 +1,21 @@
+$kind: collection
+description: |-
+  Integration test suite for the UserAPI. Covers user registration, login, and CRUD operations.
+
+  Uses the {{baseUrl}} and {{apiKey}} environment variables.
+  Run with the "Local" environment active.
+variables:
+  token: ""
+  userId: ""
+auth:
+  type: apikey
+  credentials:
+    key: X-API-Key
+    value: "{{apiKey}}"
+    in: header
+scripts:
+  - type: http:afterResponse
+    code: |-
+      // Log response status for every request
+      console.log(`[${pm.info.requestName}] Status: ${pm.response.code}`);
+    language: text/javascript

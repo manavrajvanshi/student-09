@@ -1,0 +1,15 @@
+$kind: http-request
+name: 'Delete User'
+method: DELETE
+order: 8000
+url: '{{baseUrl}}/v1/users/{{userId}}'
+pathVariables:
+  - key: id
+    value: '{{userId}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
